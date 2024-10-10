@@ -13,11 +13,9 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { Subscription, filter } from 'rxjs';
 
-import { AdminComponent } from '../../../../../../libs/damap/src/lib/components/admin/admin.component'; // eslint-disable-line
 import { ConfigService } from '../../services/config.service';
 import { DmpComponent } from '../../../../../../libs/damap/src/lib/components/dmp/dmp.component'; // eslint-disable-line
 import { MatSidenav } from '@angular/material/sidenav';
-import { PlansComponent } from '../../../../../../libs/damap/src/lib/components/plans/plans.component'; // eslint-disable-line
 import { TranslateService } from '@ngx-translate/core';
 import pkg from '../../../../../../package.json'; // eslint-disable-line
 
@@ -63,27 +61,21 @@ export class LayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     const browserLang = this.translate.getBrowserLang();
     this.translate.use(browserLang?.match(/en|de/) ? browserLang : 'en');
     this.lang = this.translate.currentLang.toUpperCase();
-
-    // the breakpoint (1300px) here can be adjusted based on design requirements or device-specific considerations.
-    this.observer.observe(['(max-width: 480px)']).subscribe(result => {
-      setTimeout(() => {
-        this.isCollapsed = result.matches;
-        this.cdr.detectChanges();
-      });
+    this.observer.observe([Breakpoints.Handset]).subscribe(result => {
+      this.isSmallScreen = result.matches;
+      this.checkScreenSize();
     });
+
     this.handleRouteChange();
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => {
-      this.handleRouteChange();
-      this.routerEventsSubscription = this.router.events
-        .pipe(filter(event => event instanceof NavigationEnd))
-        .subscribe(() => {
-          this.handleRouteChange();
-        });
-      this.checkScreenSize();
-    });
+    this.routerEventsSubscription = this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.handleRouteChange();
+      });
+    this.checkScreenSize();
   }
 
   ngOnDestroy(): void {
@@ -112,10 +104,6 @@ export class LayoutComponent implements OnInit, AfterViewInit, OnDestroy {
    * step changes of the DMP component.
    * @return {void}
    */
-  public isAdmin(): boolean {
-    return this.auth.isAdmin();
-  }
-
   private handleRouteChange(): void {
     // unsubscribe, if subscribed before. will subscribe again when redirecting to DMP component
     this.dataInfoService?.unsubscribe();
@@ -134,7 +122,6 @@ export class LayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     } else if (
       componentInstance instanceof DashboardComponent ||
-      componentInstance instanceof PlansComponent ||
       componentInstance == null
     ) {
       // Dashboard or router not yet initialized
@@ -145,14 +132,6 @@ export class LayoutComponent implements OnInit, AfterViewInit, OnDestroy {
         ' ' +
         this.templateDataLayout.layout.menu.titleDashboard;
       this.summaryLine = 'layout.menu.section';
-    } else if (componentInstance instanceof AdminComponent) {
-      this.greeting =
-        this.templateDataLayout.layout.menu.greeting +
-        ' ' +
-        this.name +
-        ' ' +
-        this.templateDataLayout.layout.menu.titleDashboard;
-      this.summaryLine = 'layout.menu.adminSection';
     }
   }
 
