@@ -1,7 +1,5 @@
 # DMP Tool JKU - Johannes Kepler University Linz
 
-This repository contains the source code for the DMP Tool JKU, developed by Laura Thaci. The tool leverages the principles of machine-actionable Data Management Plans (maDMPs) to streamline the creation and management of data management plans (DMPs) for research purposes.
-
 ## Overview
 
 The DMP Tool JKU is designed to integrate seamlessly with Johannes Kepler University Linz's institutional systems, automating the collection of project details, research data, and personnel information. This integration minimizes repetitive data entry and enhances the accuracy and efficiency of DMP creation.
