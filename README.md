@@ -1,16 +1,8 @@
 # DMP Tool JKU - Johannes Kepler University Linz
 
-## Overview
-
-The DMP Tool JKU is designed to integrate seamlessly with Johannes Kepler University Linz's institutional systems, automating the collection of project details, research data, and personnel information. This integration minimizes repetitive data entry and enhances the accuracy and efficiency of DMP creation.
-
-The tool produces DMPs that are both human-readable and editable in formats such as Word, and machine-actionable, aligning with the Science Europe’s Practical Guide to the International Alignment of Research Data Management and the RDA recommendations on maDMPs.
+This project is based on the DAMAP frontend developed in cooperation between TU Wien and TU Graz but has been adapted to meet the specific needs of Johannes Kepler University Linz. The project uses [Angular](https://angular.io/) as its framework and relies on [NX](https://nx.dev/) as a build system.
 
 For more information about the base DAMAP implementation, visit the [DAMAP frontend repository](https://github.com/tuwien-csd/damap-frontend).
-
-## DMP Tool JKU Frontend
-
-This project is based on the DAMAP frontend developed in cooperation between TU Wien and TU Graz but has been adapted to meet the specific needs of Johannes Kepler University Linz. The project uses [Angular](https://angular.io/) as its framework and relies on [NX](https://nx.dev/) as a build system.
 
 ### Development Server
 
