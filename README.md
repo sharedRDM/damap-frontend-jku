@@ -51,8 +51,3 @@ For more details, please refer to the [DMP Tool JKU Documentation](https://githu
 ### Customisation
 
 For customising the DMP Tool JKU frontend, please refer to the [CUSTOMISING](CUSTOMISING.md) page.
-
-## Author
-
-- Laura Thaci
-- Mojib Wali
