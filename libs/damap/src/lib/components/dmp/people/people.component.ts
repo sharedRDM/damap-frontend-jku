@@ -10,8 +10,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import {
-  FormControl,
-  FormGroup,
   UntypedFormArray,
   UntypedFormControl,
   UntypedFormGroup,
@@ -31,11 +29,15 @@ import { PersonSearchComponent } from '../../../widgets/person-search/person-sea
 import { Config } from '../../../domain/config';
 import { orcidValidator } from '../../../validators/orcid.validator';
 import { notEmptyValidator } from '../../../validators/not-empty.validator';
+import { ContributorFilterPipe } from './contributor-filter.pipe';
+import { FeedbackService } from '../../../services/feedback.service';
 
 @Component({
   selector: 'app-dmp-people',
   templateUrl: './people.component.html',
   styleUrls: ['./people.component.css'],
+  providers: [ContributorFilterPipe],
+  standalone: false,
 })
 export class PeopleComponent implements OnInit, OnDestroy {
   @ViewChild(PersonSearchComponent) personSearch: PersonSearchComponent;
@@ -60,6 +62,7 @@ export class PeopleComponent implements OnInit, OnDestroy {
   searchResult$: Observable<SearchResult<Contributor>>;
   serviceConfig$: ServiceConfig[];
   serviceConfigType: ServiceConfig;
+  isCollapsed: boolean = false;
 
   currentUpdateContributorIdx: number = -1;
   form = new UntypedFormGroup({
@@ -79,6 +82,8 @@ export class PeopleComponent implements OnInit, OnDestroy {
     private backendService: BackendService,
     private cdr: ChangeDetectorRef,
     public dialog: MatDialog,
+    private feedbackService: FeedbackService,
+    private contributorFilter: ContributorFilterPipe,
   ) {}
 
   ngOnInit(): void {
@@ -87,7 +92,6 @@ export class PeopleComponent implements OnInit, OnDestroy {
         setTimeout(() => {
           this.serviceConfig$ = config.personSearchServiceConfigs;
           this.serviceConfigType = config.personSearchServiceConfigs[0];
-          this.cdr.detectChanges();
         });
       });
 
@@ -101,7 +105,6 @@ export class PeopleComponent implements OnInit, OnDestroy {
         });
       this.subscriptions.push(searchSubscription);
     });
-    this.contactContributor();
   }
 
   mbox(): UntypedFormControl {
@@ -124,12 +127,10 @@ export class PeopleComponent implements OnInit, OnDestroy {
 
   changeContactPerson(contact: Contributor): void {
     this.contactPerson.emit(contact);
-    this.contactContributor();
   }
 
   addContributor(contributor: Contributor): void {
     this.contributorToAdd.emit(contributor);
-    this.contactContributor();
   }
 
   triggerUpdateContributorDetails(idx: number) {
@@ -161,6 +162,7 @@ export class PeopleComponent implements OnInit, OnDestroy {
         identifier: this.form.value.personId,
         type: IdentifierType.ORCID,
       },
+      roles: this.form.value.roles,
     };
 
     this.contributorToUpdate.emit({
@@ -193,11 +195,13 @@ export class PeopleComponent implements OnInit, OnDestroy {
         }
       });
     }
-    this.contactContributor();
   }
 
   searchContributor(term: string): void {
     this.searchTerms.next(term);
+    if (term.length > 0) {
+      this.isCollapsed = true;
+    }
   }
 
   get contributors(): UntypedFormArray {
@@ -209,21 +213,43 @@ export class PeopleComponent implements OnInit, OnDestroy {
     return datasets.filter(item => item.deletionPerson?.id === contributor?.id);
   }
 
-  contactContributor(): number {
-    let contributors = this.dmpForm.get('contributors') as UntypedFormArray;
-    return contributors.controls.findIndex(
-      (contributor, index) => contributor.value.contact,
+  addAllContributors(): void {
+    const filteredMembers = this.contributorFilter.filterContributors(
+      this.projectMembers,
+      this.dmpForm.get('contributors').value,
     );
+
+    filteredMembers.forEach(member => {
+      this.contributorToAdd.emit(member);
+    });
+
+    const remainingMembers = this.contributorFilter.filterContributors(
+      this.projectMembers,
+      this.dmpForm.get('contributors').value,
+    );
+    if (remainingMembers.length === 0) {
+      this.isCollapsed = true;
+    }
+  }
+
+  doesContactExist(): boolean {
+    const contributors = this.dmpForm.get('contributors') as UntypedFormArray;
+    return contributors.controls.some(contributor => contributor.value.contact);
   }
 
   onViewChange(view: 'primaryView' | 'secondaryView'): void {
     this.selectedView = view;
+  }
+
+  toggleRecommendations(): void {
+    this.isCollapsed = !this.isCollapsed;
   }
 }
 
 @Component({
   selector: 'app-confirm-deletion-dialog',
   templateUrl: 'confirm-deletion-dialog.html',
+  standalone: false,
 })
 export class ConfirmDeletionDialogComponent {
   constructor(@Inject(MAT_DIALOG_DATA) public data: Dataset[]) {}

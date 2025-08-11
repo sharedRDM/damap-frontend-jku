@@ -9,9 +9,11 @@ import { Dataset } from '../../domain/dataset';
   selector: 'app-textarea-wrapper [label] [control]',
   templateUrl: './textarea-wrapper.component.html',
   styleUrls: ['./textarea-wrapper.component.css'],
+  standalone: false,
 })
 export class TextareaWrapperComponent implements OnInit {
   @Input() label: string;
+  @Input() labelSuffix: string;
   @Input() labelDatasets: Dataset[];
   @Input() control: UntypedFormControl;
   @Input() placeholder: string;
