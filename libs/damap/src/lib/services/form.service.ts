@@ -1,8 +1,11 @@
-import { compareContributors, Contributor } from '../domain/contributor';
+import { Contributor, compareContributors } from '../domain/contributor';
 import {
+  FormArray,
   FormControl,
+  FormGroup,
   UntypedFormArray,
   UntypedFormBuilder,
+  UntypedFormControl,
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
@@ -22,8 +25,8 @@ import { Storage } from '../domain/storage';
 import { ccBy } from '../widgets/license-wizard/license-wizard-list';
 import { currencyValidator } from '../validators/currency.validator';
 import { notEmptyValidator } from '../validators/not-empty.validator';
-import { urlValidator } from '../validators/url.validator';
 import { uriValidator } from '../validators/uri.validator';
+import { urlValidator } from '../validators/url.validator';
 
 @Injectable({
   providedIn: 'root',
@@ -31,6 +34,7 @@ import { uriValidator } from '../validators/uri.validator';
 export class FormService {
   private TEXT_MAX_LENGTH = 4000;
   private TEXT_SHORT_LENGTH = 255;
+  private readonly DEFAULT_BANNER_COLOR = '#E6F3FF';
   private readonly form: UntypedFormGroup;
   private readonly initialFormValue;
 
@@ -317,9 +321,8 @@ export class FormService {
   }
 
   public addContributorToForm(contributor: Contributor, contact = false) {
-    const contributorFormGroup = this.createContributorFormGroup();
-    contributorFormGroup.patchValue(contributor);
-    contributorFormGroup.patchValue({ contact });
+    contributor.contact = contact;
+    const contributorFormGroup = this.mapContributorToFormGroup(contributor);
     (this.form.get('contributors') as UntypedFormArray).push(
       contributorFormGroup,
     );
@@ -341,12 +344,21 @@ export class FormService {
     dataset.startDate = this.getStartDate();
 
     const formGroup = this.mapDatasetToFormGroup(dataset);
+
     (this.form.get('datasets') as UntypedFormArray).push(formGroup);
   }
 
   public updateDatasetOfForm(index: number, update: Dataset) {
     const dataset = (this.form.get('datasets') as UntypedFormArray).at(index);
     dataset.patchValue(update);
+
+    const technicalResourceArray = dataset.get(
+      'technicalResources',
+    ) as FormArray;
+    technicalResourceArray.clear();
+    update.technicalResources?.forEach(resource => {
+      technicalResourceArray.push(this.createTechnicalResource(resource.name));
+    });
   }
 
   public removeDatasetFromForm(index: number) {
@@ -452,6 +464,21 @@ export class FormService {
       retentionPeriod: [10],
       source: [DataSource.NEW, Validators.required],
       datasetId: [null],
+      technicalResources: this.formBuilder.array([]),
+    });
+  }
+
+  public createTechnicalResource(name = ''): UntypedFormGroup {
+    return this.formBuilder.group({
+      name: [
+        name,
+        [
+          Validators.required,
+          notEmptyValidator(),
+          Validators.maxLength(this.TEXT_SHORT_LENGTH),
+        ],
+      ],
+      description: [''],
     });
   }
 
@@ -506,7 +533,7 @@ export class FormService {
       ],
       dismissible: [true],
       color: [
-        '',
+        this.DEFAULT_BANNER_COLOR,
         [
           Validators.required,
           Validators.maxLength(this.TEXT_SHORT_LENGTH),
@@ -556,9 +583,18 @@ export class FormService {
     }
   }
 
-  private mapDatasetToFormGroup(dataset: Dataset): UntypedFormGroup {
+  public mapDatasetToFormGroup(dataset: Dataset): UntypedFormGroup {
     const formGroup = this.createDatasetFormGroup(dataset.title);
     formGroup.patchValue(dataset);
+
+    const technicalResourceArray = formGroup.get(
+      'technicalResources',
+    ) as FormArray;
+    technicalResourceArray.clear();
+    dataset.technicalResources?.forEach(resource => {
+      technicalResourceArray.push(this.createTechnicalResource(resource.name));
+    });
+
     return formGroup;
   }
 
@@ -572,9 +608,9 @@ export class FormService {
       lastName: ['', Validators.maxLength(this.TEXT_SHORT_LENGTH)],
       mbox: ['', Validators.maxLength(this.TEXT_SHORT_LENGTH)],
       personId: [null],
-      role: [null],
       roleInProject: [''],
       universityId: [null],
+      roles: new UntypedFormControl([]),
     });
   }
 
@@ -582,7 +618,12 @@ export class FormService {
     contributor: Contributor,
   ): UntypedFormGroup {
     const formGroup = this.createContributorFormGroup();
-    formGroup.patchValue(contributor);
+
+    formGroup.patchValue({
+      ...contributor,
+      roles: contributor.roles || [],
+    });
+
     return formGroup;
   }
 
@@ -629,6 +670,7 @@ export class FormService {
       backupLocation: ['', Validators.maxLength(this.TEXT_SHORT_LENGTH)],
       backupFrequency: ['', Validators.maxLength(this.TEXT_SHORT_LENGTH)],
       datasets: [[]],
+      isManagedInternally: [false],
     });
   }
 
@@ -644,6 +686,7 @@ export class FormService {
       backupLocation: externalStorage.backupLocation || null,
       backupFrequency: externalStorage.backupFrequency || null,
       datasets: externalStorage.datasets || [],
+      isManagedInternally: externalStorage.isManagedInternally || false,
     });
     return formGroup;
   }

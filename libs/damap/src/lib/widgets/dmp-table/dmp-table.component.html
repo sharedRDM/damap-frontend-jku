@@ -11,7 +11,7 @@
     (searchChange)="applyFilter($event)"></app-search-field>
 </div>
 
-<div class="table-wrapper" *ngIf="(dmpsLoaded | async) === LoadingState.LOADED">
+<div class="table-wrapper">
   <table
     mat-table
     [dataSource]="dataSource"
@@ -109,7 +109,10 @@
           #menu="matMenu"
           xPosition="before"
           class="mat-menu-secondary-container">
-          <button mat-menu-item routerLink="/dmp/{{ element.id }}/access">
+          <button
+            mat-menu-item
+            *ngIf="element.accessType === FUNCTION_ROLES.OWNER || admin"
+            routerLink="/dmp/{{ element.id }}/access">
             <mat-icon>admin_panel_settings</mat-icon>
             {{ "plans.table.actions.access" | translate }}
           </button>
@@ -139,14 +142,13 @@
     <tr mat-header-row *matHeaderRowDef="tableHeaders"></tr>
     <tr mat-row *matRowDef="let element; columns: tableHeaders"></tr>
     <!-- Row shown when there is no matching data. -->
-    <tr class="mat-row" *matNoDataRow></tr>
     <tr class="mat-row" *matNoDataRow>
       <ng-container *ngIf="searchTerm.length > 0; else empty">
         <td class="mat-cell" colspan="4">
           {{ "plans.table.nodatafilter" | translate: { value: searchTerm } }}
         </td>
       </ng-container>
-      <ng-template #empty>
+      <ng-template #empty *ngIf="(dmpsLoaded | async) === LoadingState.LOADED">
         <td class="mat-cell" colspan="4">
           {{ "plans.table.empty" | translate }}
         </td>

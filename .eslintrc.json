@@ -10,11 +10,9 @@
       },
       "extends": [
         "plugin:@angular-eslint/recommended",
-        "plugin:@angular-eslint/template/process-inline-templates",
-        "prettier"
+        "plugin:@angular-eslint/template/process-inline-templates"
       ],
       "rules": {
-        "no-console": "error",
         "@angular-eslint/directive-selector": [
           "error",
           {
@@ -41,7 +39,7 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
+        "@nx/enforce-module-boundaries": [
           "error",
           {
             "enforceBuildableLibDependency": true,
@@ -57,5 +55,5 @@
       }
     }
   ],
-  "plugins": ["@typescript-eslint", "@nrwl/nx", "@angular-eslint"]
+  "plugins": ["@typescript-eslint", "@nx/eslint-plugin", "@angular-eslint"]
 }

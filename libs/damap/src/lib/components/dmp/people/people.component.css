@@ -103,6 +103,15 @@ mat-form-field {
   border: 2px solid var(--accent-color-lighter);
 }
 
+.white-background-panel {
+  background-color: var(--primary-lightest);
+}
+
+.contributor-mbox {
+  display: flex;
+  align-items: center;
+}
+
 @media (max-width: 768px) {
   .mat-card-container {
     flex-direction: column;
@@ -163,4 +172,16 @@ mat-form-field {
 
 .contact-label {
   margin-top: 1em;
+}
+
+.add-all-container {
+  padding: 8px 16px;
+  display: flex;
+  justify-content: flex-end;
+  background-color: var(--primary-lightest);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.add-all-container button {
+  margin: 0;
 }
