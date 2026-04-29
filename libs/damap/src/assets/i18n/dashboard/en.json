@@ -7,7 +7,7 @@
         "prefix": "A ",
         "dmp": {
           "text": "DMP",
-          "link": "https://www.tuwien.at/en/research/rti-support/research-data/rdm-infos-tips/dmp"
+          "link": "https://www.tuwien.at/index.php?id=2819&L=1"
         },
         "middle": " is a structured document that keeps record of what research data is created and what happens to that data during and after a project. It helps with planning the research process, managing your data in accordance with the ",
         "fairprinciples": {
@@ -56,7 +56,7 @@
       },
       "export": {
         "heading": "Export the DMP draft as a document.",
-        "body": "Depending on the funder of your project, the exported DMP will either reflect the funder’s DMP template (FWF) or the DMP recommendations by Science Europe. This happens automatically for imported projects."
+        "body": "Depending on the funder of your project, the exported DMP will either reflect the funder’s DMP template (FWF, Horizon Europe) or the DMP recommendations by Science Europe. This happens automatically for imported projects."
       },
       "finalise": {
         "heading": "Finalise your DMP in a text editor.",
