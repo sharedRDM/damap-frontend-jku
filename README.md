@@ -1,6 +1,6 @@
 # DMP Tool JKU - Johannes Kepler University Linz
 
-This project is based on the DAMAP frontend developed in cooperation between TU Wien and TU Graz but has been adapted to meet the specific needs of Johannes Kepler University Linz. The project uses [Angular](https://angular.io/) as its framework and relies on [NX](https://nx.dev/) as a build system.
+This project is based on the DAMAP frontend developed in cooperation between TU Wien and TU Graz but has been adapted to meet the specific needs of Johannes Kepler University Linz. The project uses [Angular](https://angular.io/) as its framework and relies on the standard Angular CLI as a build system.
 
 For more information about the base DAMAP implementation, visit the [DAMAP frontend repository](https://github.com/tuwien-csd/damap-frontend).
 
@@ -9,7 +9,7 @@ For more information about the base DAMAP implementation, visit the [DAMAP front
 To run the development server:
 
 ```bash
-nx serve damap-frontend
+ng serve damap-frontend
 ```
 
 This will start the dev server, and the app will be accessible at `http://localhost:4200/`. Any changes made to the source files will trigger automatic reloading.
@@ -19,10 +19,10 @@ This will start the dev server, and the app will be accessible at `http://localh
 To build the project for production:
 
 ```bash
-nx build damap-frontend
+ng build damap-frontend
 ```
 
-The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+The build artifacts will be stored in the `dist/` directory. Use the `--configuration=production` flag for a production build.
 
 ### Running Unit Tests
 
@@ -31,13 +31,13 @@ To run the unit tests:
 - For the DAMAP library:
 
   ```bash
-  nx test damap
+  ng test damap
   ```
 
 - For the DMP Tool JKU frontend:
 
   ```bash
-  nx test damap-frontend
+  ng test damap-frontend
   ```
 
 ### Running with Docker

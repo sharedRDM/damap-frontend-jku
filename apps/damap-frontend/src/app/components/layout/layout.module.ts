@@ -1,4 +1,3 @@
-// eslint-disable-next-line @nx/enforce-module-boundaries
 import { AppBannerModule } from '../../../../../../libs/damap/src/lib/widgets/app-banner/app-banner.module';
 import { CommonModule } from '@angular/common';
 import { EnvBannerModule } from '@damap/core';
